@@ -5,6 +5,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 
 public class SwitchUserHelper {
+
+    private SwitchUserHelper() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Authentication userAsli(Authentication currentUser) {
         for (GrantedAuthority auth : currentUser.getAuthorities()) {
             if (SwitchUserGrantedAuthority.class.isAssignableFrom(auth.getClass())) {

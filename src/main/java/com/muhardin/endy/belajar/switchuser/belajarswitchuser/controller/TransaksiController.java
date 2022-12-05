@@ -2,18 +2,12 @@ package com.muhardin.endy.belajar.switchuser.belajarswitchuser.controller;
 
 import com.muhardin.endy.belajar.switchuser.belajarswitchuser.dao.PenggunaDao;
 import com.muhardin.endy.belajar.switchuser.belajarswitchuser.dao.TransaksiDao;
-import com.muhardin.endy.belajar.switchuser.belajarswitchuser.entity.Pengguna;
-import com.muhardin.endy.belajar.switchuser.belajarswitchuser.entity.Transaksi;
-import com.muhardin.endy.belajar.switchuser.belajarswitchuser.utility.SwitchUserHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -29,11 +23,9 @@ public class TransaksiController {
         ModelMap mm = new ModelMap();
 
         penggunaDao.findByUsername(currentUser.getName())
-                .ifPresent(p->{
-                    mm.addAttribute(
-                            "daftarTransaksi",
-                            transaksiDao.findByPengguna(p));
-                });
+                .ifPresent(p-> mm.addAttribute(
+                        "daftarTransaksi",
+                        transaksiDao.findByPengguna(p)));
 
         return mm;
     }

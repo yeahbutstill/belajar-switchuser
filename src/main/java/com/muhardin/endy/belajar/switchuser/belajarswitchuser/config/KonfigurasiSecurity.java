@@ -1,5 +1,6 @@
 package com.muhardin.endy.belajar.switchuser.belajarswitchuser.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.switchuser.SwitchUserFilt
 
 import javax.sql.DataSource;
 
+@Slf4j
 @Configuration @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class KonfigurasiSecurity extends WebSecurityConfigurerAdapter {
@@ -32,13 +34,18 @@ public class KonfigurasiSecurity extends WebSecurityConfigurerAdapter {
             + "where p.username = ?";
 
     @Bean
-    public SwitchUserFilter switchUserFilter() throws Exception {
-        SwitchUserFilter filter = new SwitchUserFilter();
-        filter.setUserDetailsService(userDetailsService());
-        filter.setSwitchUserUrl("/switchuser/form");
-        filter.setExitUserUrl("/switchuser/exit");
-        filter.setTargetUrl("/transaksi/list");
-        return filter;
+    public SwitchUserFilter switchUserFilter() {
+        try {
+            SwitchUserFilter filter = new SwitchUserFilter();
+            filter.setUserDetailsService(userDetailsService());
+            filter.setSwitchUserUrl("/switchuser/form");
+            filter.setExitUserUrl("/switchuser/exit");
+            filter.setTargetUrl("/transaksi/list");
+            return filter;
+        } catch (RuntimeException e) {
+            log.info("Unable to switch user filter: {}", e.getMessage());
+        }
+        return null;
     }
 
     @Bean
@@ -47,35 +54,41 @@ public class KonfigurasiSecurity extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .jdbcAuthentication()
-                .dataSource(dataSource)
-                .usersByUsernameQuery(SQL_LOGIN)
-                .authoritiesByUsernameQuery(SQL_ROLE)
-                .passwordEncoder(passwordEncoder());
+    public void configureGlobal(AuthenticationManagerBuilder auth) {
+        try {
+            auth
+                    .jdbcAuthentication()
+                    .dataSource(dataSource)
+                    .usersByUsernameQuery(SQL_LOGIN)
+                    .authoritiesByUsernameQuery(SQL_ROLE)
+                    .passwordEncoder(passwordEncoder());
+        } catch (Exception e) {
+            log.info("Unable to login SQL: {}", e.getMessage());
+        }
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests(authorize -> authorize
-            .mvcMatchers("/switchuser/exit")
-                .hasAuthority(SwitchUserFilter.ROLE_PREVIOUS_ADMINISTRATOR)
-            .mvcMatchers("/switchuser/select", "/switchuser/form")
-                .hasAuthority("Administrator")
-            .anyRequest().authenticated()
-        )
-        .addFilterAfter(switchUserFilter(), FilterSecurityInterceptor.class)
-        .logout().permitAll()
-        .and().formLogin()
-        .defaultSuccessUrl("/transaksi/list", true);
+    protected void configure(HttpSecurity http) {
+        try {
+            http.authorizeRequests(authorize -> authorize
+                .mvcMatchers("/switchuser/exit")
+                    .hasAuthority(SwitchUserFilter.ROLE_PREVIOUS_ADMINISTRATOR)
+                .mvcMatchers("/switchuser/select", "/switchuser/form")
+                    .hasAuthority("Administrator")
+                .anyRequest().authenticated()
+            )
+            .addFilterAfter(switchUserFilter(), FilterSecurityInterceptor.class)
+            .logout().permitAll()
+            .and().formLogin()
+            .defaultSuccessUrl("/transaksi/list", true);
+        } catch (Exception e) {
+            log.info("Someting wrong in configure: {}", e.getMessage());
+        }
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring()
-                .antMatchers("/js/*")
-                .antMatchers("/img/*")
-                .antMatchers("/css/*");
+                .antMatchers("/js/*", "/img/*", "/css/*");
     }
 }

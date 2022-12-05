@@ -11,8 +11,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;
@@ -35,12 +33,12 @@ public class BelajarSwitchuserApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		penggunaDao.findAll().forEach(p -> generateTransaction(p, 20));
+		penggunaDao.findAll().forEach(this::generateTransaction);
 	}
 
-	private void generateTransaction(Pengguna pengguna, Integer jumlahTransaksi) {
+	private void generateTransaction(Pengguna pengguna) {
 		Faker faker = new Faker() ;
-		for (int i = 0; i < jumlahTransaksi; i++) {
+		for (int i = 0; i < 20; i++) {
 			Transaksi t = new Transaksi();
 			t.setPengguna(pengguna);
 			t.setKeterangan("Transaksi "+pengguna.getNama()+" #"+ (i+1));
