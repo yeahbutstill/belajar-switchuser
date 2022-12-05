@@ -1,0 +1,19 @@
+services:
+  db:
+    container_name: switch_user
+    image: postgres:12
+    environment:
+      POSTGRES_USER: yeahbutstill
+      POSTGRES_PASSWORD: 3sGnyr6UYUyrQah7uVwzLWec
+      PGDATA: PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - "$PWD/user-data:/var/lib/postgresql/data"
+    ports:
+      - "5332:5432"
+    networks:
+      - db
+    restart: unless-stopped
+
+networks:
+  db:
+    driver: bridge

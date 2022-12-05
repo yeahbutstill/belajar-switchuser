@@ -23,7 +23,7 @@ public class AuditTrailInterceptor extends HandlerInterceptorAdapter {
     @Autowired private AuditLogDao auditLogDao;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean  preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         log.info("URL yang diakses : {}", request.getRequestURL());
         if (!request.getRequestURL().toString().contains("transaksi")) {
             log.info("Bukan url transaksi");

@@ -1,0 +1,31 @@
+server:
+  port: 3000
+logging:
+  level:
+    '[org.springframework.security]': DEBUG
+    '[org.springframework.security.web.FilterChainProxy]' : DEBUG
+    '[com.yeahbutstill.demospring3]': TRACE
+spring:
+  main:
+    web-application-type: servlet
+  datasource:
+    hikari:
+      connection-timeout: 600000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 10
+    url: jdbc:postgresql://localhost:5332/switchuser?reWriteBatchedInserts=true
+    username: yeahbutstill
+    password: 3sGnyr6UYUyrQah7uVwzLWec
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+    show-sql: true
